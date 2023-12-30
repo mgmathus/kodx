@@ -254,7 +254,7 @@ public class ImagesToPdf extends javax.swing.JFrame {
                 pics.add(item);
             }
             instance.getFrame1().setVisible(true);
-            int result = instance.buildpdf(pics, filename, ad1);
+            int result = instance.buildPDF(pics, filename, ad1);
             instance.getFrame1().setVisible(false);
             switch (result) {
                 case 0:

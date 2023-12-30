@@ -40,7 +40,7 @@ public class Core {
     /**
      * @param args the command line arguments
      */
-    
+
     Working frameWorking = new Working();
 
     public Core() {
@@ -52,14 +52,14 @@ public class Core {
         frameWorking.setLocation(x, y);
     }
 
-    
-    
+
+
     public Working getFrame1() {
         return frameWorking;
     }
 
 
-    public int buildpdf(List images, String filename, Advance ad) {
+    public int buildPDF(List<String> images, String filename, Advance ad) {
         Document document = new Document();
 
         try {
@@ -67,18 +67,23 @@ public class Core {
                 filename = filename + ".pdf";
             }
             PdfWriter.getInstance(document, new FileOutputStream(filename));
-            Iterator imgs = images.iterator();
             document.open();
             document.setMargins(ad.getLeft(), ad.getRight(), ad.getUp(), ad.getDown());
             Rectangle pageSize = new Rectangle(document.getPageSize());
             pageSize.setBackgroundColor(new com.itextpdf.text.BaseColor(ad.getMycolor().getRGB()));
             document.setPageSize(pageSize);
-            while (imgs.hasNext()) {
-                Image image1 = Image.getInstance(imgs.next().toString());
-                System.out.println(image1.getUrl());
-                document.add(image1);
-                document.newPage();
-            }
+
+            images.forEach(image -> {
+                try {
+                    Image image1 = Image.getInstance(image);
+                    System.out.println(image1.getUrl());
+                    document.add(image1);
+                    document.newPage();
+                }catch (final Exception e){
+                    e.printStackTrace();
+                    throw new RuntimeException();
+                }
+            });
 
             document.close();
             return 0;
@@ -87,31 +92,34 @@ public class Core {
             return -1;
         }
     }
-    
 
-    public void extractImages(String inFile, String destino) throws IOException {
+
+    public void extractImages(String inFile, String destination) throws IOException {
         PDDocument document = null;
         document = PDDocument.load(inFile);
-        List pages = document.getDocumentCatalog().getAllPages();
-        Iterator iter = pages.iterator();
-        int contador = 0;
-        while (iter.hasNext()) {
-            PDPage page = (PDPage) iter.next();
-            PDResources resources = page.getResources();
-            Map pageImages = resources.getImages();
-            if (pageImages != null) {
-                Iterator imageIter = pageImages.keySet().iterator();
+        List<PDPage> pages = document.getDocumentCatalog().getAllPages();
 
-                while (imageIter.hasNext()) {
-                    contador = contador + 1;
-                    String key = (String) imageIter.next();
-                    PDXObjectImage image = (PDXObjectImage) pageImages.get(key);
-                    String destinox = destino + contador + ".jpg";
-                    OutputStream out = new FileOutputStream(destinox);
-                    image.write2OutputStream(out);
+
+        pages.forEach(page -> {
+            int counter = 0;
+            try {
+                PDResources resources = page.getResources();
+                Map pageImages = resources.getImages();
+                if (pageImages != null) {
+                    Iterator imageIter = pageImages.keySet().iterator();
+
+                    while (imageIter.hasNext()) {
+                        counter++;
+                        String key = (String) imageIter.next();
+                        PDXObjectImage image = (PDXObjectImage) pageImages.get(key);
+                        OutputStream out = new FileOutputStream(destination + counter + ".jpg");
+                        image.write2OutputStream(out);
+                    }
                 }
+            }catch(Exception e){
+                e.printStackTrace();
             }
-        }
+        });
     }
 
     public String getArchivoTexto(String ruta) {
@@ -143,8 +151,8 @@ public class Core {
         }
         return contenido;
     }
-    
-    
+
+
     public void splitPDF(String name,String file,String dir) {
         try {
             PdfReader reader = new PdfReader(file);
@@ -165,8 +173,8 @@ public class Core {
             e.printStackTrace();
         }
     }
-    
-    public int mergePDF(List files, String filename){
+
+    public int mergePDF(List<String> files, String filename){
         try {
           if (!filename.endsWith(".pdf")) {
                 filename = filename + ".pdf";
@@ -174,16 +182,19 @@ public class Core {
           Document PDFCombineUsingJava = new Document();
           PdfCopy copy = new PdfCopy(PDFCombineUsingJava, new FileOutputStream(filename));
           PDFCombineUsingJava.open();
-          PdfReader ReadInputPDF;
-          int number_of_pages;
-          Iterator fls=files.iterator();
-          while(fls.hasNext()){
-                  ReadInputPDF = new PdfReader(fls.next().toString());
-                  number_of_pages = ReadInputPDF.getNumberOfPages();
+
+          files.forEach(file -> {
+              try {
+                  PdfReader ReadInputPDF = new PdfReader(file);
+                  int number_of_pages = ReadInputPDF.getNumberOfPages();
                   for (int page = 0; page < number_of_pages; ) {
-                          copy.addPage(copy.getImportedPage(ReadInputPDF, ++page));
-                        }
-          }
+                      copy.addPage(copy.getImportedPage(ReadInputPDF, ++page));
+                  }
+              }catch(Exception e){
+                  e.printStackTrace();
+              }
+          });
+
           PDFCombineUsingJava.close();
         }
         catch (Exception i)
@@ -197,18 +208,19 @@ public class Core {
     public boolean isImage(String path) {
         File f = new File(path);
         String mimetype = new MimetypesFileTypeMap().getContentType(f);
-        String type = mimetype.split("/")[0];
-        if (type.equals("image")) {
+        String[] types = mimetype.split("/");
+
+        if (types.length >0 && types[0].equals("image")) {
             return true;
         } else {
             return false;
         }
     }
-    
+
      public boolean isPDF(String path) {
         File f = new File(path);
         String mimetype = new MimetypesFileTypeMap().getContentType(f);
-        
+
         if (mimetype.equals("application/octet-stream")) {
             return true;
         } else {
