@@ -54,9 +54,9 @@ public class ExtractImages extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Seleccione El archivo PDF");
+        jLabel1.setText("Seleccione el archivo PDF");
 
-        jButton2.setText("Extraer Imagenes");
+        jButton2.setText("Extraer imagenes");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -150,7 +150,7 @@ public class ExtractImages extends javax.swing.JFrame {
         JFileChooser chooser;
         chooser = new JFileChooser();
         chooser.setCurrentDirectory(new File("."));
-        chooser.setDialogTitle("Seleccione el Directorio");
+        chooser.setDialogTitle("Seleccione el directorio");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -179,14 +179,14 @@ public class ExtractImages extends javax.swing.JFrame {
                 instance.getFrame1().setVisible(true);
                 instance.extractImages(jTextField1.getText(), jTextField2.getText());
                 instance.getFrame1().setVisible(false);
-                JOptionPane.showMessageDialog(this, "Imagenes Extraidas Correctamente");
+                JOptionPane.showMessageDialog(this, "Imagenes extraidas correctamente");
                 this.dispose();
             }else{
                 JOptionPane.showMessageDialog(this, "Ingrese los datos requeridos");
             }
             
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "No fue posible Extraer la imagenes del documento");
+            JOptionPane.showMessageDialog(this, "No fue posible extraer la imagenes del documento");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 

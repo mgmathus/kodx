@@ -103,7 +103,7 @@ public class Advance extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jTabbedPane1.addTab("Color de Fondo", jColorChooser1);
+        jTabbedPane1.addTab("Color de fondo", jColorChooser1);
 
         jTextField1.setText("0");
 
